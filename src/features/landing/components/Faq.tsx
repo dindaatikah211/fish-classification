@@ -1,24 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
+import { Reveal } from "@/shared/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/shared/components/motion/Stagger";
+import { EASE } from "@/shared/constants/Motion";
 import { FAQ_ITEMS } from "../constants/Faq";
 
 export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  
+
   return (
     <section id="faq" className="relative z-20 bg-white px-6 py-24 md:py-32">
       <div className="mx-auto max-w-2xl">
-        <h2 className="font-instrument text-[32px] md:text-[44px] tracking-tight text-[#1a1a1a] mb-12 text-center">
-          Pertanyaan Umum
-        </h2>
+        <Reveal>
+          <h2 className="font-instrument text-[32px] md:text-[44px] tracking-tight text-[#1a1a1a] mb-12 text-center">
+            Pertanyaan Umum
+          </h2>
+        </Reveal>
 
-        <div className="space-y-3">
+        <Stagger className="space-y-3">
           {FAQ_ITEMS.map((item, index) => {
             const isOpen = openIndex === index;
             return (
-              <div
+              <StaggerItem
                 key={item.question}
                 className="rounded-2xl border border-black/10 bg-[#F3F4ED] overflow-hidden"
               >
@@ -35,19 +41,26 @@ export function Faq() {
                     }`}
                   />
                 </button>
-                <div
-                  className={`overflow-hidden px-6 transition-all duration-300 ${
-                    isOpen ? "max-h-40 pb-4 opacity-100" : "max-h-0 opacity-0"
-                  }`}
-                >
-                  <p className="font-sans text-[14px] text-[#1a1a1a]/70 leading-relaxed">
-                    {item.answer}
-                  </p>
-                </div>
-              </div>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="answer"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: EASE }}
+                      className="overflow-hidden px-6"
+                    >
+                      <p className="pb-4 font-sans text-[14px] text-[#1a1a1a]/70 leading-relaxed">
+                        {item.answer}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </StaggerItem>
             );
           })}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

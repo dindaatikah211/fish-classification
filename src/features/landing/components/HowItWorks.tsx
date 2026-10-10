@@ -1,4 +1,6 @@
 import { STEPS } from "@/features/landing/constants/Steps";
+import { Reveal } from "@/shared/components/motion/Reveal";
+import { Stagger, StaggerItem } from "@/shared/components/motion/Stagger";
 
 export function HowItWorks() {
   return (
@@ -7,19 +9,22 @@ export function HowItWorks() {
       className="relative z-20 bg-[#F3F4ED] px-6 py-24 md:py-32"
     >
       <div className="mx-auto max-w-5xl text-center">
-        <h2 className="font-instrument text-[32px] md:text-[44px] tracking-tight text-[#1a1a1a] mb-4">
-          Tiga langkah sederhana
-        </h2>
-        <p className="font-sans text-[16px] text-[#1a1a1a]/70 max-w-xl mx-auto mb-16">
-          Tidak perlu jadi ahli perikanan untuk mengenali jenis ikanmu.
-        </p>
+        <Reveal>
+          <h2 className="font-instrument text-[32px] md:text-[44px] tracking-tight text-[#1a1a1a] mb-4">
+            Tiga langkah sederhana
+          </h2>
+          <p className="font-sans text-[16px] text-[#1a1a1a]/70 max-w-xl mx-auto mb-16">
+            Tidak perlu jadi ahli perikanan untuk mengenali jenis ikanmu.
+          </p>
+        </Reveal>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <Stagger className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {STEPS.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div
+              <StaggerItem
                 key={step.title}
+                whileHover={{ y: -6 }}
                 className="rounded-3xl border border-black/10 bg-white/60 backdrop-blur-sm p-8 text-left"
               >
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#0871E7]/10">
@@ -31,10 +36,10 @@ export function HowItWorks() {
                 <p className="font-sans text-[14px] text-[#1a1a1a]/70 leading-relaxed">
                   {step.description}
                 </p>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Instrument_Serif } from "next/font/google";
+import { Providers } from "@/shared/components/motion/Providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,7 +43,9 @@ export default function RootLayout({
           href="https://db.onlinewebfonts.com/c/440b53b1a1c65037f944ff19259d8014?family=Nokia+Cellphone+FC+Small"
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
