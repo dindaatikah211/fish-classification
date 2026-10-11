@@ -1,87 +1,93 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowLeft, MapPin, Globe, Microscope } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/shared/components/motion/Reveal";
-import { Navbar } from "./Navbar";
+import { Stagger, StaggerItem } from "@/shared/components/motion/Stagger";
+import { FISH_SPECIES } from "../constants/FishSpecies";
+import { FishDetailHero } from "./FishDetailHero";
+import { FishNavCard } from "./FishNavCard";
 import { Footer } from "./Footer";
-import type { FISH_SPECIES } from "../constants/FishSpecies";
+import { Navbar } from "./Navbar";
 
 interface FishDetailLayoutProps {
   fish: (typeof FISH_SPECIES)[number];
 }
 
+const EYEBROW = "font-sans text-[11px] uppercase tracking-[0.15em] text-[#1a1a1a]/50";
+
 export function FishDetailLayout({ fish }: FishDetailLayoutProps) {
+  const total = FISH_SPECIES.length;
+  const index = FISH_SPECIES.findIndex((item) => item.id === fish.id);
+  const prev = FISH_SPECIES[(index - 1 + total) % total];
+  const next = FISH_SPECIES[(index + 1) % total];
+
+  const facts = [
+    { label: "Ciri Khas", value: fish.ciri },
+    { label: "Habitat", value: fish.habitat },
+    { label: "Persebaran", value: fish.persebaran },
+  ];
+
   return (
-    <main className="relative bg-[#F3F4ED] min-h-screen">
+    <main className="relative min-h-screen bg-[#F3F4ED]">
       <Navbar />
 
-      <section className="px-6 pt-32 pb-20 md:pt-40">
-        <div className="mx-auto max-w-3xl">
+      <section className="px-6 pb-16 pt-28 md:pb-20">
+        <div className="mx-auto max-w-5xl">
           <Reveal>
             <Link
               href="/#jenis-ikan"
-              className="mb-8 inline-flex items-center gap-2 font-sans text-[14px] text-[#1a1a1a]/70 transition-opacity hover:opacity-100"
+              className="mb-8 inline-flex items-center gap-2 font-sans text-[14px] text-[#1a1a1a]/70 transition-colors hover:text-[#0871E7]"
             >
               <ArrowLeft className="h-4 w-4" />
               Kembali ke Jenis Ikan
             </Link>
           </Reveal>
 
-          <Reveal delay={0.1} y={48}>
-            <div className="overflow-hidden rounded-3xl border border-black/10 bg-white">
-              <div className="relative h-72 w-full md:h-96">
-                <Image
-                  src={fish.image}
-                  alt={fish.nama}
-                  fill
-                  className="object-cover"
-                />
-              </div>
+          <FishDetailHero fish={fish} index={index} total={total} />
 
-              <div className="p-8 md:p-10">
-                <h1 className="font-instrument text-[36px] md:text-[48px] tracking-tight text-[#1a1a1a] mb-1">
-                  {fish.nama}
-                </h1>
-                <p className="font-sans text-[16px] italic text-[#1a1a1a]/50 mb-6">
-                  {fish.namaLatin}
-                </p>
+          <div className="mt-16 grid gap-12 lg:grid-cols-12 lg:gap-16">
+            <Reveal className="lg:col-span-5">
+              <p className={`${EYEBROW} mb-4`}>Tentang ikan ini</p>
+              <p className="font-instrument text-[24px] leading-snug tracking-tight text-[#1a1a1a] md:text-[28px]">
+                {fish.deskripsi}
+              </p>
+            </Reveal>
 
-                <p className="font-sans text-[15px] text-[#1a1a1a]/80 leading-relaxed mb-8">
-                  {fish.deskripsi}
-                </p>
-
-                <div className="space-y-4 border-t border-black/10 pt-6 font-sans text-[14px] text-[#1a1a1a]/80">
-                  <div className="flex items-start gap-3">
-                    <Microscope className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0871E7]" />
-                    <p>
-                      <span className="font-medium">Ciri Khas:</span> {fish.ciri}
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0871E7]" />
-                    <p>
-                      <span className="font-medium">Habitat:</span>{" "}
-                      {fish.habitat}
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Globe className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0871E7]" />
-                    <p>
-                      <span className="font-medium">Persebaran:</span>{" "}
-                      {fish.persebaran}
-                    </p>
-                  </div>
-                </div>
-
-                <Link
-                  href="/classify"
-                  className="group relative mt-8 inline-flex items-center justify-center overflow-hidden rounded-full bg-[#0871E7] px-6 py-3 font-sans text-[14px] text-white shadow-[inset_0_-4px_4px_rgba(255,255,255,0.39)] outline outline-1 outline-[#0871E7] -outline-offset-1"
+            <Stagger className="border-b border-black/10 lg:col-span-7">
+              {facts.map(({ label, value }) => (
+                <StaggerItem
+                  key={label}
+                  className="grid gap-2 border-t border-black/10 py-6 sm:grid-cols-[160px_1fr] sm:gap-8"
                 >
-                  <span className="absolute left-[10%] top-[1px] h-4 w-[80%] rounded-[12px] bg-gradient-to-b from-[#DEF0FC] to-transparent transition-transform duration-300 group-hover:scale-x-105" />
-                  <span className="relative">Coba Deteksi Ikan Ini</span>
-                </Link>
-              </div>
+                  <p className={`${EYEBROW} sm:pt-1`}>{label}</p>
+                  <p className="font-sans text-[16px] leading-relaxed text-[#1a1a1a]">
+                    {value}
+                  </p>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          </div>
+
+          <Reveal className="mt-20" y={48}>
+            <div className="rounded-[32px] bg-[#0871E7] px-8 py-14 text-center md:px-16 md:py-20">
+              <p className="font-instrument text-[36px] leading-none tracking-tight text-white md:text-[56px]">
+                Punya foto ikan {fish.nama.toLowerCase()}?
+              </p>
+              <p className="mx-auto mb-8 mt-4 max-w-md font-sans text-[15px] leading-relaxed text-white/70">
+                Unggah fotonya dan lihat apakah AI kami mengenali jenisnya.
+              </p>
+              <Link
+                href="/classify"
+                className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 font-sans text-[14px] font-medium text-[#0871E7] transition-transform duration-300 hover:scale-105"
+              >
+                Coba Deteksi Ikan Ini
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
             </div>
+          </Reveal>
+
+          <Reveal className="mt-14 grid divide-y divide-black/10 border-y border-black/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+            <FishNavCard fish={prev} direction="prev" />
+            <FishNavCard fish={next} direction="next" />
           </Reveal>
         </div>
       </section>
