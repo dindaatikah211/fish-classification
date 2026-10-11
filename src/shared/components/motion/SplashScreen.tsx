@@ -6,10 +6,12 @@ import { useLenis } from "lenis/react";
 import { EASE, SPLASH_DURATION } from "@/shared/constants/Motion";
 
 const FISH_PATHS = [
-  "M28 60 C58 14 132 14 160 60 C132 106 58 106 28 60 Z",
-  "M160 60 L194 32 L194 88 Z",
-  "M86 28 C98 10 120 10 130 30",
-  "M60 42 C50 54 50 66 60 78",
+  "M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z",
+  "M16 17.93a9.77 9.77 0 0 1 0-11.86",
+  "M7 10.67C7 8 5.58 5.97 2.73 5.5c-1 1.5-1 5 .23 6.5-1.24 1.5-1.24 5-.23 6.5C5.58 18.03 7 16 7 13.33",
+  "M10.46 7.26C10.2 5.88 9.17 4.24 8 3h5.8a2 2 0 0 1 1.98 1.67l.23 1.4",
+  "m16.01 17.93-.23 1.4A2 2 0 0 1 13.8 21H9.5a5.96 5.96 0 0 0 1.49-3.98",
+  "M18 12v.5",
 ];
 
 interface SplashScreenProps {
@@ -47,17 +49,17 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
 
       <div className="flex flex-col items-center gap-7">
         <svg
-          viewBox="0 0 200 120"
+          viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
-          className="h-[min(30vh,220px)] w-auto"
+          className="h-[min(28vh,200px)] w-auto"
         >
           {FISH_PATHS.map((d, index) => (
             <motion.path
               key={d}
               d={d}
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={1.5}
               strokeLinecap="round"
               strokeLinejoin="round"
               initial={{ pathLength: 0 }}
@@ -65,15 +67,6 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
               transition={{ duration: 1.2, delay: index * 0.2, ease: EASE }}
             />
           ))}
-          <motion.circle
-            cx={48}
-            cy={52}
-            r={3}
-            fill="currentColor"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 1 }}
-          />
         </svg>
         <p
           className="font-instrument tracking-tight"
