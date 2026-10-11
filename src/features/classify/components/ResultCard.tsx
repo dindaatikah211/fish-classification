@@ -1,87 +1,67 @@
 "use client";
 
-import { RotateCcw, MapPin, Tag, Microscope } from "lucide-react";
+import Image from "next/image";
+import { motion } from "motion/react";
+import { Globe, MapPin, Tag, Microscope } from "lucide-react";
 import type { PredictResponse } from "@/shared/lib/api";
+import { EASE } from "@/shared/constants/Motion";
+import { rise, stagger } from "@/shared/constants/Variants";
+import { PANEL, STAGE } from "../constants/Classify";
 
 interface ResultCardProps {
   result: PredictResponse;
   preview: string;
-  onReset: () => void;
 }
 
-export function ResultCard({ result, preview, onReset }: ResultCardProps) {
-  const { info, confidence } = result;
+const container = stagger(0.4);
+
+export function ResultCard({ result, preview }: ResultCardProps) {
+  const { info } = result;
+
+  const rows = [
+    { icon: Tag, label: "Klasifikasi", value: `${info.kelas} — ${info.ordo}` },
+    { icon: MapPin, label: "Habitat", value: info.habitat },
+    { icon: Globe, label: "Persebaran", value: info.persebaran },
+    { icon: Microscope, label: "Ciri Khas", value: info.ciri_khas },
+  ];
 
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6 text-left md:p-8">
-      <div className="flex flex-col gap-6 md:flex-row">
-        <img
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className={PANEL}
+    >
+      <motion.div
+        initial={{ clipPath: "inset(0 0 100% 0)" }}
+        animate={{ clipPath: "inset(0 0 0% 0)" }}
+        transition={{ duration: 1, delay: 0.2, ease: EASE }}
+        className={`${STAGE} relative overflow-hidden bg-[#F3F4ED]`}
+      >
+        <Image
           src={preview}
           alt={info.nama}
-          className="h-48 w-full rounded-2xl object-cover md:h-auto md:w-48"
+          fill
+          sizes="(min-width: 1024px) 480px, 90vw"
+          className="object-contain"
         />
+      </motion.div>
 
-        <div className="flex-1">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-2xl">{info.emoji}</span>
-            <h2 className="font-instrument text-[28px] md:text-[32px] tracking-tight text-[#1a1a1a]">
-              {info.nama}
-            </h2>
-          </div>
-          <p className="font-sans text-[14px] italic text-[#1a1a1a]/50 mb-4">
-            {info.nama_latin}
-          </p>
-
-          {/* Confidence bar */}
-          <div className="mb-5">
-            <div className="mb-1 flex items-center justify-between font-sans text-[13px] text-[#1a1a1a]/70">
-              <span>Tingkat Keyakinan</span>
-              <span className="font-semibold text-[#0871E7]">
-                {confidence}%
-              </span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-[#F3F4ED]">
-              <div
-                className="h-full rounded-full bg-[#0871E7] transition-all duration-700"
-                style={{ width: `${confidence}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3 font-sans text-[14px] text-[#1a1a1a]/80">
-            <div className="flex items-start gap-3">
-              <Tag className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0871E7]" />
-              <p>
-                <span className="font-medium">Klasifikasi:</span>{" "}
-                {info.kelas} — {info.ordo}
-              </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0871E7]" />
-              <p>
-                <span className="font-medium">Habitat:</span> {info.habitat}
-              </p>
-            </div>
-            <div className="flex items-start gap-3">
-              <Microscope className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0871E7]" />
-              <p>
-                <span className="font-medium">Ciri Khas:</span>{" "}
-                {info.ciri_khas}
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="divide-y divide-black/10 px-2 pt-2">
+        {rows.map(({ icon: Icon, label, value }) => (
+          <motion.div
+            key={label}
+            variants={rise}
+            className="flex items-start gap-3 py-4 font-sans text-[14px] text-[#1a1a1a]/80"
+          >
+            <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0871E7]" />
+            <p>
+              <span className="font-medium text-[#1a1a1a]">{label}:</span>{" "}
+              {value}
+            </p>
+          </motion.div>
+        ))}
       </div>
-
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={onReset}
-          className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-[#F3F4ED] px-6 py-3 font-sans text-[14px] text-[#1a1a1a] transition-colors hover:bg-[#e8e9e2]"
-        >
-          <RotateCcw className="h-4 w-4" />
-          Coba Foto Lain
-        </button>
-      </div>
-    </div>
+    </motion.div>
   );
 }

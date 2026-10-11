@@ -1,10 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "motion/react";
-import { UploadZone } from "./UploadZone";
-import { ResultCard } from "./ResultCard";
+import { AnimatePresence, motion } from "motion/react";
 import { classifyFish, type PredictResponse } from "@/shared/lib/api";
+import { EASE } from "@/shared/constants/Motion";
+import { SPLIT_GRID } from "../constants/Classify";
+import { ResultCard } from "./ResultCard";
+import { ResultSummary } from "./ResultSummary";
+import { UploadZone } from "./UploadZone";
+import { ClassifyIntro } from "./ClassifyIntro";
+
+const swap = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -16 },
+  transition: { duration: 0.4, ease: EASE },
+};
 
 export function ClassifyClient() {
   const [file, setFile] = useState<File | null>(null);
@@ -42,27 +53,30 @@ export function ClassifyClient() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-    >
+    <AnimatePresence mode="wait">
       {result && preview ? (
-        <ResultCard result={result} preview={preview} onReset={handleReset} />
+        <motion.div key="result" {...swap} className={SPLIT_GRID}>
+          <ResultSummary result={result} onReset={handleReset} />
+          <ResultCard result={result} preview={preview} />
+        </motion.div>
       ) : (
-        <UploadZone
-          preview={preview}
-          loading={loading}
-          onFileSelect={handleFileSelect}
-          onSubmit={handleSubmit}
-        />
+        <motion.div key="upload" {...swap} className={SPLIT_GRID}>
+          <ClassifyIntro />
+          <div>
+            <UploadZone
+              preview={preview}
+              loading={loading}
+              onFileSelect={handleFileSelect}
+              onSubmit={handleSubmit}
+            />
+            {error && (
+              <p className="mt-4 text-center font-sans text-[14px] text-red-500">
+                {error}
+              </p>
+            )}
+          </div>
+        </motion.div>
       )}
-
-      {error && (
-        <p className="mt-4 text-center font-sans text-[14px] text-red-500">
-          {error}
-        </p>
-      )}
-    </motion.div>
+    </AnimatePresence>
   );
 }
